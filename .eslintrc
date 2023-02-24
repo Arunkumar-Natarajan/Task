@@ -1,0 +1,31 @@
+{
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "extends": "airbnb-base",
+    "rules": {
+      "comma-dangle": [
+        "error",
+        {
+          "functions": "ignore"
+        }
+      ],
+      "func-names": [
+        "error",
+        "never"
+      ],
+      "no-console": "off",
+      "no-param-reassign": "off",
+      "prefer-destructuring": [
+        "error",
+        {
+          "array": false,
+          "object": false
+        },
+        {
+          "enforceForRenamedProperties": false
+        }
+      ]
+    }
+  }

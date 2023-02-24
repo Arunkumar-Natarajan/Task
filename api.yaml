@@ -1,0 +1,194 @@
+swagger: "2.0"
+info:
+  title: swagger
+  description: Swagger API documentation.
+  version: 1.0
+  contact:
+    email: arunnatarajan1894@gmail.com
+  license:
+    name: Apache 2.0
+    url: "http://apache.org/"
+  servers:
+    -url: 'http://localhost:4000'
+    description: This is my local server
+    -url: 'http://companyport:5285'
+    description: This is development server
+
+basePath: /api
+schemes: [http,https]
+
+paths:
+  /string:
+    get:
+      tags:
+        - "Sample"
+      summary: Returning a string
+      description: It is returning a fake string
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+            example: "A fake string"
+        400:
+          description: User Error
+        500:
+          description: Internal server error!
+  /access/list:
+    get:
+      tags:
+        - "Users Group Access"
+      summary: Returning all sub-module access list
+      description: Returning all sub-modules access list
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal server error
+
+    
+  /modules:
+    get:
+      tags:
+        - "Users Group Access"
+      summary: Returning all modules name
+      description: Returning all modules name
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties: 
+              moduleId:
+                type: integer
+              name:
+                type: string
+        500:
+          description: Internal server error
+
+  /module/{moduleId}:
+    get:
+      tags:
+        - "Users Group Access"
+      summary: Returning module and sub modules name by ID
+      description: Return the specific module info
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            example: {moduleName: Group A}
+        500:
+          description: Internal server error
+  
+  /group/{groupId}:
+    get:
+      tags:
+        - "Users Group Access"
+      summary: Returning group information by ID
+      description: Return the specific group info
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            example: {groupName: Group A}
+
+  /group/create:
+    post:
+      tags:
+        - "Users Group Access"
+      summary: creating a group to users
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - groupName
+            properties:
+              groupName:
+                type: string
+      responses:
+        200:
+          description: Success
+        400:
+          description: User group exist!
+        500:
+          description: Internal server error
+
+  /group/permission/add:
+    post:
+      tags:
+        - "Users Group Access"
+      summary: Map module access to user group
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            required:
+              - groupId
+              - moduleId
+              - subModuleId
+              - accessId
+            items:
+              type: object
+              properties:
+                groupId:
+                  type: integer
+                moduleId:
+                  type: integer
+                subModuleId:
+                  type: integer
+                accessId:
+                  type: integer
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal server error
+
+  /group/delete/permission/{permissionId}:
+    delete:
+      tags:
+        - "Users Group Access"
+      ssummary: Deleting group permission
+      description: Deleting specifiction module permission
+      parameters:
+        - name: permissionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal server error
+
+components:
+  schemas:
+    Group:
+      type: object
+      required:
+        - groupName
+      properties:
+        - string
