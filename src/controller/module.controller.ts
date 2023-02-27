@@ -163,9 +163,11 @@ class ModuleController {
   ): Promise<Response | void> => {
     try {
       let permissionId: number = Number(req.params.permissionId);
+      let payload: object = req.body;
 
       let deletePermission = await moduleService.removePermissionById(
-        permissionId
+        permissionId,
+        payload
       );
 
       return sendSuccessResponse(
@@ -174,6 +176,34 @@ class ModuleController {
         statusCodes.HTTP_OK,
         message.permissionRemoved,
         deletePermission
+      );
+    } catch (error) {
+      return internalServerError(
+        req,
+        res,
+        statusCodes.HTTP_INTERNAL_SERVER_ERROR,
+        error
+      );
+    }
+  };
+
+  deleteModuleFromGrop = async (
+    req: Request,
+    res: Response
+  ): Promise<Response | void> => {
+    try {
+      let permissionId: number = Number(req.params.permissionId);
+
+      let deleteModule = await moduleService.deleteModuleByPermissionId(
+        permissionId
+      );
+
+      return sendSuccessResponse(
+        req,
+        res,
+        statusCodes.HTTP_OK,
+        message.permissionRemoved,
+        deleteModule
       );
     } catch (error) {
       return internalServerError(

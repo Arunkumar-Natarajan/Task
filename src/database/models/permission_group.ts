@@ -6,8 +6,12 @@ interface permissionAttributes {
   groupId: number;
   moduleId: number;
   subModuleId: number;
-  accessId: number;
   status: number;
+  isAll: boolean;
+  isCreate: boolean;
+  isView: boolean;
+  isUpdate: boolean;
+  isDelete: boolean;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -19,8 +23,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
     groupId!: number;
     moduleId!: number;
     subModuleId!: number;
-    accessId!: number;
     status!: number;
+    isAll!: boolean;
+    isCreate!: boolean;
+    isView!: boolean;
+    isUpdate!: boolean;
+    isDelete!: boolean;
 
     static associate(models: any) {
       // define association here
@@ -40,10 +48,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         as: "Sub_Module",
       });
 
-      Permission_Group.belongsTo(models.User_Access, {
-        foreignKey: "accessId",
-        as: "User_Access",
-      });
+      // Permission_Group.belongsTo(models.User_Access, {
+      //   foreignKey: "accessId",
+      //   as: "User_Access",
+      // });
     }
   }
 
@@ -66,9 +74,29 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      accessId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      // accessId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: false,
+      // },
+      isAll: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isCreate: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isView: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isUpdate: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isDelete: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       status: {
         type: DataTypes.INTEGER,

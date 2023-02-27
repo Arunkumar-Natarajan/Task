@@ -109,12 +109,20 @@ class ModuleService {
 
   getGroupById = async (groupId: number) => {
     try {
-      let groupData = await db.User_Group.findOne({
+      let groupData = await db.User_Group.findAll({
         attributes: ["groupId", "groupName"],
         include: {
           model: db.Permission_Group,
           as: "Permission_Group",
-          attributes: ["permissionId", "accessId"],
+          attributes: {
+            exclude: [
+              "groupId",
+              "moduleId",
+              "subModuleId",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
           required: false,
           where: { status: constantsCode.status.Active },
           include: [
@@ -128,11 +136,6 @@ class ModuleService {
               as: "Sub_Module",
               attributes: ["subModuleId", "name"],
             },
-            {
-              model: db.User_Access,
-              as: "User_Access",
-              attributes: ["accessName"],
-            },
           ],
         },
         where: {
@@ -140,8 +143,6 @@ class ModuleService {
           status: constantsCode.status.Active,
         },
       });
-
-      console.log("groupId ====>", groupData.Permission_Group.length);
 
       if (!groupData) {
         return {
@@ -151,23 +152,25 @@ class ModuleService {
 
       let result: any;
 
-      if (groupData.Permission_Group.length > 0) {
-        result = groupData.Permission_Group.map((el: any) => {
+      if (groupData.length > 0) {
+        result = groupData[0].Permission_Group.map((el: any) => {
           return {
-            groupId: groupData.groupId ? groupData.groupId : null,
-            groupName: groupData.groupName ? groupData.groupName : null,
-            accessInfo: [
-              {
-                permissionId: el.permissionId ? el.permissionId : null,
-                moduleName: el.Module.name ? el.Module.name : null,
-                subModuleName: el.Sub_Module.name ? el.Sub_Module.name : null,
-                access: el.User_Access.accessName
-                  ? el.User_Access.accessName
-                  : null,
-              },
-            ],
+            permissionId: el.permissionId ? el.permissionId : null,
+            moduleName: el.Module.name ? el.Module.name : null,
+            subModuleName: el.Sub_Module.name ? el.Sub_Module.name : null,
+            isAll: el.isAll,
+            isView: el.isView,
+            isCreate: el.isCreate,
+            isUpdate: el.isUpdate,
+            isDelete: el.isDelete,
           };
         });
+
+        result = {
+          groupId: groupData[0].groupId ? groupData[0].groupId : null,
+          groupName: groupData[0].groupName ? groupData[0].groupName : null,
+          accessInfo: result,
+        };
       } else {
         result = groupData;
       }
@@ -179,14 +182,26 @@ class ModuleService {
     }
   };
 
-  removePermissionById = async (permissionId: number) => {
+  removePermissionById = async (permissionId: number, payload: object) => {
     try {
-      let removePermission = await db.Permission_Group.update(
+      let removePermission = await db.Permission_Group.update(payload, {
+        where: { permissionId: permissionId },
+      });
+
+      return removePermission;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  deleteModuleByPermissionId = async (permissionId: number) => {
+    try {
+      let deleteModule = await db.Permission_Group.update(
         { status: constantsCode.status.Deleted },
         { where: { permissionId: permissionId } }
       );
 
-      return removePermission;
+      return deleteModule;
     } catch (error) {
       throw error;
     }
